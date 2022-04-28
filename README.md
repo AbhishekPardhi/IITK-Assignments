@@ -5,3 +5,4 @@ You can find 'my' solutions to them in my repositories:
 - C++ Assigment: <a href="https://github.com/AbhishekPardhi/Library-System-Management">Library-System-Management</a>
 - Shell Scripting Assignment: <a href="https://github.com/AbhishekPardhi/Shell-Scripting">Shell-Scripting</a>
 - Python Assignment: <a href="https://github.com/AbhishekPardhi/Classification">Classification</a>
+- SAT Solver: <a href="https://github.com/AbhishekPardhi/SAT-Solver">SAT-Solver</a>
