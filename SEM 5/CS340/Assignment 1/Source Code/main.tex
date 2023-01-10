@@ -1,0 +1,111 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[greek,english]{babel}
+\usepackage{alphabeta} 
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{subcaption}
+\usepackage{multirow}
+\captionsetup{compatibility=false}
+
+\usepackage[pdftex]{graphicx}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{blindtext}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{siunitx}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\linespread{1.06}
+\setlength{\parskip}{8pt plus2pt minus2pt}
+
+\usepackage{float}
+\restylefloat{table}
+
+\widowpenalty 10000
+\clubpenalty 10000
+
+\newcommand{\eat}[1]{}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\usepackage[official]{eurosym}
+\usepackage{enumitem}
+\setlist{nolistsep,noitemsep}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cite}
+\usepackage{lipsum}
+
+\usepackage{gastex}
+\usepackage[options]{gastex}
+\usepackage[pdflatex=true]{gastex}
+
+\selectlanguage{english}
+
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+\begin{document}
+
+%===========================================================
+\begin{titlepage}
+\begin{center}
+
+% Top 
+\includegraphics[width=0.35\textwidth]{redlogo}~\\[1cm]
+
+
+% Title
+\HRule \\[0.4cm]
+{ \LARGE 
+  \textbf{Assignment 1: CS340}\\[0.4cm]
+  \emph{3-bit Gray code counter and 8-bit Adder/Subtracter Using FSM}\\[0.4cm]
+}
+\HRule \\[1.5cm]
+
+
+
+% Author
+{ \large
+  Abhishek Pardhi, Aayush Kumar, Sarthak Kohli\\[0.1cm]
+  200026, 200008, 200886\\[0.1cm]
+  B.Tech students\\[0.1cm]
+  \texttt{apardhi20@iitk.ac.in, akgarg20@iitk.ac.in, sarthakk20@iitk.ac.in}
+}
+
+\vfill
+
+\textsc{\Large Indian Institute of Technology\\Kanpur}\\[0.4cm]
+\textsc{\large Department of Computer Science \& Engineering }\\[0.4cm]
+
+\includegraphics[scale=1,bb=0 0 30 30]{redlogo.jpg}
+% Bottom
+{\large \today}
+ 
+\end{center}
+\end{titlepage}
+
+
+
+\newpage
+
+
+
+%===========================================================
+\tableofcontents
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\newpage
+\setcounter{page}{1}
+
+%===========================================================
+%===========================================================
+\section{Question 1}
+Describe the language accepted by the following DFA :
+\begin{gpicture}
+  \node[Nmarks=i](A)(0,0){0}
+  \node(B)(20,0){1}
+  \node[Nmarks=f](C)(40,0){2}
+  \drawedge(A,B){$a$}
+  \drawloop(B){$b$}
+  \drawedge(B,C){$c$}
+\end{gpicture}
+\end{document} 

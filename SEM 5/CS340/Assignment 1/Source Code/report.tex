@@ -1,0 +1,1050 @@
+\documentclass[12pt,a4paper]{article}
+\usepackage[utf8]{inputenc}
+\usepackage[greek,english]{babel}
+\usepackage{alphabeta} 
+\usepackage{graphicx}
+\usepackage{subfig}
+\usepackage{subcaption}
+\usepackage{multirow}
+\captionsetup{compatibility=false}
+
+\usepackage[pdftex]{graphicx}
+\usepackage[top=1in, bottom=1in, left=1in, right=1in]{geometry}
+\usepackage{subcaption}
+\usepackage{array}
+\usepackage{ragged2e}
+\usepackage{blindtext}
+\usepackage{booktabs}
+\usepackage{multirow}
+\usepackage{siunitx}
+\newcolumntype{P}[1]{>{\centering\arraybackslash}p{#1}}
+\linespread{1.06}
+\setlength{\parskip}{8pt plus2pt minus2pt}
+
+\usepackage{tikz}
+\def\checkmark{\tikz\fill[scale=0.4](0,.35) -- (.25,0) -- (1,.7) -- (.25,.15) -- cycle;}
+
+\usepackage{float}
+\restylefloat{table}
+
+\widowpenalty 10000
+\clubpenalty 10000
+
+\newcommand{\eat}[1]{}
+\newcommand{\HRule}{\rule{\linewidth}{0.5mm}}
+
+\usepackage[official]{eurosym}
+\usepackage{enumitem}
+\setlist{nolistsep,noitemsep}
+\usepackage[hidelinks]{hyperref}
+\usepackage{cite}
+\usepackage{lipsum}
+
+\usepackage{gastex}
+\usepackage[options]{gastex}
+\usepackage[pdflatex=true]{gastex}
+
+\selectlanguage{english}
+
+\newcommand{\overbar}[1]{\mkern 1.5mu\overline{\mkern-1.5mu#1\mkern-1.5mu}\mkern 1.5mu}
+
+\begin{document}
+
+%===========================================================
+\begin{titlepage}
+\begin{center}
+
+%Top 
+
+
+% Title
+\HRule \\[0.4cm]
+{ \LARGE 
+  \textbf{Assignment 1}\\[0.4cm]
+  \emph{CS340: Theory of Computation}\\[0.4cm]
+}
+\HRule \\[1.5cm]
+
+
+
+% Author
+{ \large
+  Abhishek Pardhi, Aayush Kumar, Sarthak Kohli\\[0.1cm]
+  200026, 200008, 200886\\[0.1cm]
+  UG Y20 - CSE\\[0.1cm]
+  \texttt{apardhi20@iitk.ac.in, aayushk20@iitk.ac.in, sarthakk20@iitk.ac.in}
+}
+
+\vfill
+
+\textsc{\Large Indian Institute of Technology\\Kanpur}\\[0.4cm]
+\textsc{\large Department of Computer Science \& Engineering }\\[0.4cm]
+
+% \begin{figure}[h!]
+%     \centering
+%     \includegraphics[bb=0 0 230 219]{redlogo.jpg}
+% \end{figure}
+
+% Bottom
+{\large \today}
+ 
+\end{center}
+\end{titlepage}
+
+
+
+\newpage
+
+
+
+%===========================================================
+\tableofcontents
+\addtocontents{toc}{\protect\thispagestyle{empty}}
+\newpage
+\setcounter{page}{1}
+
+%===========================================================
+%===========================================================
+\section{Question 1}
+We can divide all possible inputs into three cases: $\epsilon$, first digit is 0, first digit is 1
+\begin{enumerate}
+\item \textbf{Case 1: }
+\\Here, our input is $\epsilon$, thus we end at our start state $q_0$, which is not an accepting state. Thus, this input is rejected.
+\item \textbf{Case 2: }
+\\Here, the first digit of our input is 0. So, we will move from start state $q_0$ to $q_1$, an accepting state. Any input (0 or 1) following this first digit will lead us to state $q_2$, which does not have any outgoing transitions, and is a non-accepting state. 
+\\Thus, the only possible input that can be accepted in this case is \textbf{0}.
+\item \textbf{Case 3: }
+\\ Here, the first digit of our input is 1. So, we will move from start state $q_0$ to $q_3$. 
+We can observe that upon reaching $q_3$, we can transition only to states $q_4$ and $q_5$ and possibly back to $q_3$.
+\begin{itemize}
+\item To transition to $q_5$ and back, we will first need to transition from $q_3$ to $q_5$, then perform any number of self transitions in $q_5$ and finally transition back to $q_3$.
+\item Based on the description of the DFA given to us, this means that we must first take '0' input to transition to $q_5$, take any number of '1' inputs, then take another '0' input to transition back to $q_3$. 
+\item Thus, our input for this transition to $q_5$ and back is defined as $01^*0$.
+\item Simiarly, transitions to $q_4$ and back will be defined by inputs $10^*1$.
+\end{itemize}
+We can perform any number of these returning transitions in any order and still remain at $q_3$. Thus, the regular expression that describes the input for which we start and end at $q_3$ is $(10^*1 + 01^*0)^*$
+\\Thus, we can say that to transition from $q_0$ to $q_3$, our input is described by the regular expression $1(10^*1 + 01^*0)^*$.
+\\From $q_3$, our input will only be accepted if we end up at accepting state $q_4$, as there are no transitions possible to reach $q_1$. To end up at $q_4$, the rest of the input must start with a 1 (so we reach $q_4$ from $q_3$) and must be followed by any number of '0's (which will let $q_4$ transition only to itself). So, this part of the input is described by $10^*$.
+\boldmath
+\\Hence, the accepted input in this case will be $1(10^*1 + 01^*0)^*10^*$.
+\end{enumerate}
+\\Combining all these cases, the final regular expression that describes the language accepted by the given DFA is \boldmath{$0+1(01^*0+10^*1)^*10^*$}.
+\unboldmath
+
+\section{Question 2}
+
+\textbf{Strategy:}
+If $L$ is regular , there exists a DFA which accepts the strings present in the language $L$. Using that DFA we will construct a NFA/DFA which accepts the string present in the language $oddL$ which will prove that the language $oddL$ is regular.
+
+\textbf{Construction of NFA for $oddL$}:
+
+Let us denote the DFA corresponding to $L$ as $D=\{Q,q_0,\sum,\delta,A\}$.
+The NFA accepting the language $oddL$ is $N=\{Q_N,q_0,\sum,\delta_N,A_N\}$ where ,
+
+\begin{itemize}
+    \item   $Q_N$ =$Q \cup Q' $ where $Q'=\{q^*_i| q^*_i $is a new state corresponding to every state $q_i$ in Q\}. Thus, now there are totally $2|Q|$ states
+   \item $\sum=\sum$ (Alphabet remains the same)
+   \item $\delta_N$ is defined as follows:
+   
+   $\delta_N(p,a)=q^*$ and $\delta_N(p^*,\epsilon)=q$ where $\delta(p,a)=q$ and $p^*$,$q^*$ are the new states made by us corresponding to original states $p$ and $q$.
+   \item $A_N$=$A \cup A^*$ where $A^*=\{q^*_i | q_i \in A \}$
+   
+   
+\end{itemize}
+  
+  \textbf{Proof that above NFA accepts \boldmath{$oddL$}}:
+  By construction of our NFA, as we traverse through the input, we alternatively move between the newly defined states and the original states, following a read of one letter of input (taking us to an original state) by an epsilon transition (taking us to a newly defined state, and skipping over a letter of input that would have been needed for acceptance in the original DFA). This lets us skip past the even position alphabets and still let the input be accepted.
+  
+  
+  We will consider the following two mutually exclusive and exhaustive cases:
+  \begin{itemize}
+      \item \textbf{When length of input is even:}
+        In this case, we eventually reach an original final state.
+      \item \textbf{When length of input is odd:}
+      In this case, we eventually reach a newly defined final state corresponding to an original final state.
+  \end{itemize}
+\section{Question 3}
+The minimum-state finite automaton corresponding to the given DFA is:\\
+
+\vspace{1cm}
+\hspace{4cm}
+\begin{gpicture}
+    \node[Nmarks=i](A)(0,0){$   Q_0$}
+    \node(B)(20,0){$Q_1$}
+    \node(C)(40,0){$Q_2$}
+    \node[Nmarks=r](D)(60,0){$Q_3$}
+    % \node(E)(80,0){$q_4$}
+    % \node(F)(100,0){$q_5$}
+    % \node(G)(120,0){$q_6$}
+    % \node(H)(140,0){$q_7$}
+    \drawedge(A,B){$0$}
+    \drawedge(B,C){$1$}
+    \drawedge(C,D){$0$}
+    % \drawedge(E,D){$0$}
+    % \drawedge(E,F){$1$}
+    % \drawedge(F,G){$1$}
+    % \drawedge(H,G){$0$}
+    \drawedge[curvedepth=5](B,A){$0$}
+    \drawedge[curvedepth=5](C,B){$1$}
+    \drawedge[curvedepth=20](D,A){$1$}
+    % \drawedge[curvedepth=5](F,E){$0$}
+    % \drawedge[curvedepth=5](G,F){$0$}
+    % \drawedge[curvedepth=20](H,D){$1$}
+    \drawloop[loopangle=-90](D){$0$}
+    \drawloop[loopangle=90](A){$1$}
+    % \drawloop[loopangle=90](G){$1$}
+\end{gpicture}
+
+\vspace{3cm}
+Where, $Q_0=\{q_0\},Q_1=\{q_1\}, Q_2=\{q_2\}, Q_3=\{q_3\}$
+
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c c c||} 
+ \hline
+ State & $0$ & $1$ \\ [0.5ex] 
+ \hline\hline
+ $q_0$ & $q_1$ & $q_0$ \\
+ $q_1$ & $q_0$ & $q_2$ \\
+ $q_2$ & $q_3$ & $q_1$ \\
+ $q_3$ & $q_3$ & $q_0$ \\ [1ex]
+ \hline
+\end{tabular}
+\caption{Transition table of the DFA.}
+\label{table:1}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+        \begin{tabular}{cccc}
+        0 & & &\\
+        - & 1 &  &\\
+        - & - & 2 &\\
+        - & - & - & 3\\
+        \end{tabular}
+        \caption{Initial table}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+        \begin{tabular}{cccc}
+        0 & & &\\
+        - & 1 &  &\\
+        - & - & 2 &\\
+        \checkmark & \checkmark & \checkmark & 3\\
+        \end{tabular}
+        \caption{1st iteration of algorithm}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+        \begin{tabular}{cccc}
+        0 & & &\\
+        - & 1 &  &\\
+        \checkmark & \checkmark & 2 &\\
+        \checkmark & \checkmark & \checkmark & 3\\
+        \end{tabular}
+        \caption{2nd iteration of algorithm}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+        \begin{tabular}{cccc}
+        0 & & &\\
+        \checkmark & 1 &  &\\
+        \checkmark & \checkmark & 2 &\\
+        \checkmark & \checkmark & \checkmark & 3\\
+        \end{tabular}
+        \caption{3rd iteration of algorithm}
+    \label{tab:my_label}
+\end{table}
+
+\vspace{10cm}
+
+We first removed all the non-reachable states($q_4,q_5,q_6,q_7$) from the DFA. $q_7$ is non-reachable as there are no incoming transitions to  it and it is a non-start state. While $q_4, q_5$ and $q_6$ can all reach each other, we observe that we cannot reach any of these states from another state (no outgoing transitions from any other state to either $q_4, q_5$ or $q_6$). Since none of these states are the starting state, it is impossible to reach any of them.
+\\We have used the \textit{Minimization Algorithm}.~\cite{toc}
+\\The algorithm will stop at the 3rd iteration since the table after the 3rd iteration is completely filled with checkmarks. The final table tells us that there is no equivalence relation.
+Therefore, the minimal DFA will have states defined by these equivalence classes: \\
+$Q_0=\{q_0\},Q_1=\{q_1\},Q_2=\{q_2\},Q_3=\{q_3\}$, where $Q_0$ is the initial state and $Q_3$ is the final state.
+
+\section{Question 4}
+% We have defined Mix($L_1,L_2$) as 
+% \\Mix($L_1,L_2$) = $\{w \in \sum^* \vert w = x_1y_1x_2y_2...x_ky_k$, where $x_1x_2...x_k\in L_1$ and $y_1y_2...y_k\in L_2$, each $x_i,y_i \in \sum^*\}$
+% \\We know that $L_1, L_2$ are regular languages. Thus, we can construct an NFA that accepts  Mix($L_1,L_2$) using $F_1 =\{Q_1,q_{01},\sum,\delta_1,A_1\}$, a DFA that accepts $L_1$, and $F_2 = =\{Q_2,q_{02},\sum,\delta_2,A_2\}$, a DFA that accepts $L_2$.
+% The description of the NFA is as follows:
+% \begin{itemize}
+% \item Let this NFA be $ F =\{Q,q_{01},\sum,\delta,A_2\}$
+% \item Thus, the start state of our NFA will be the same as that of $L_1$, and our final states will be same as that of $L_2$.
+% \item $Q = Q_1\cup Q_2$
+% \item The language over which the NFA operates remains the same as $L_1$ and $L_2$, that is, $\sum$.
+% \item $\delta$ is defined as:
+% \subitem $\delta(q,a) = \delta_1(q,a) \forall q \in Q_1$
+% \subitem $\delta(q,a) = \delta_2(q,a) \forall q \in Q_2$
+% \subitem $\delta(q,\epsilon) = q_{02} \forall q \in A_1$
+% \subitem $\delta(q,\epsilon) = q_{01} \forall q \in A_2$
+% \item Thus, we start with the start state of $F_1$ and proceed just like we do in $F_1$, till we encounter the final states of $F_1$. From all these final states, we take an $\epsilon$ transition to the start state of $F_2$, following which we proceed as we do in $F_2$. After reaching the final states of $F_2$, which are also the final states of our NFA, we take an $\epsilon$ transition back to the starting state of our NFA.
+% \end{itemize}
+% Let us take any string 
+
+
+% \\
+
+\textbf{Strategy}:
+
+Since $L_1$ and $L_2$ are regular , it implies that there exist DFAs $D_{L_1}$ and $D_{L_2}$ corresponding to $L_1$ and $L_2$ respectively. Using these DFAs , we will construct a NFA that will accept only the strings present in Mix($L_1,L_2$). By equivalence of DFA and NFA, we will argue that there exists a DFA that accepts the language Mix($L_1,L_2$). Hence Mix($L_1,L_2$) will be proved regular.
+
+\textbf{Construction of NFA}:
+
+Let us denote the DFA corresponding to the language $L_1$ as $D_{L_1}=\{Q_{L_1},q_{L_1},\sum,\delta_{L_1},F_{L_1}\}$ and the DFA corresponding to the language $L_2$ as $D_{L_2}=\{Q_{L_2},q_{L_2},\sum,\delta_{L_2},F_{L_2}\}$. We construct a NFA $N_{mix}=\{Q_{mix},q_{mix},\sum,\delta_{mix},F_{mix}\},$ where ,
+
+
+\begin{itemize}
+    \item $Q_{mix}=\{\{s,p\} | s \in Q_{L_1} $ and $p \in Q_{L_2} \}$
+    \\Thus, $\vert Q_{mix} \vert = \vert Q_{L_1} \vert \cdot \vert Q_{L_2} \vert  $
+    \item $q_{mix} = \{q_{L_1},q_{L_2}\}$
+    \item $\delta_{mix} $ is defined as follows : 
+    
+    $\delta_{mix}(\{s,p\},a)=\{\{s',p\},\{s,p'\} \} $ where $\delta_{L_1}(s,a)=s'$ and $\delta_{L_2}(p,a)=p'$ 
+    % $\delta_{mix}(\{s,p\},\epsilon)=\{s',p\}$ and $\delta_{mix}(\{s,p\},\epsilon)=\{s,p'\}$ where $\delta_{L_1}(s,a)=s'$ and $\delta_{L_2}(p,a)=p'$ where $s,s' \in Q_{L_1} $ and $p,p' \in  Q_{L_2}$
+    \item $F_{mix}=\{j,k\}$ where $j \in F_{L_1}, k \in F_{L_2}$
+    
+\end{itemize}
+
+
+\textbf{Claim:}
+
+The above NFA accepts Mix($L_{1},L_{2}$).
+
+\textbf{Proof:}
+
+Consider any string belonging to Mix($L_{1},L_{2}$). Let this string be $x_1y_1x_2y_2....x_ky_k,$ where $x_1x_2x_3.....x_k \in L_1$ and $y_1y_2y_3....y_k \in L_2,$ each $x_i,y_i \in \sum^*$. We take this as input to $N_{mix}$.
+\\Define states $s_{i}$ (not necessarily distinct) as the state DFA $D_{L_1}$ reaches after reading input $x_1....x_i$. Similarly, define states $p_{i}$ as the state DFA $D_{L_2}$ reaches after reading input $y_1....y_i$.
+\\We start at state $\{q_{L_1},q_{L_2}\}$. Clearly, by definition of $\delta_{mix}$, we can reach state  $\{s_1,q_{L_2}\}$ on taking input $x_1$, by simply choosing the $\{s,p\} \rightarrow \{s',p\}$ transitions as defined in $\delta_{mix}$ while taking input $x_1$.  Now, on choosing the $\{s,p\} \rightarrow \{s,p'\}$ transitions as defined in $\delta_{mix}$ while taking input $y_1$, $N_{mix}$ can reach state $\{s_1,p_1\}$ after input $x_1y_1$.
+Similarly, on choosing the $\{s,p\} \rightarrow \{s',p\}$ transitions while taking input $x_2$ $N_{mix}$ can reach $\{s_2,p_1\}$ after input $x_1y_1x_2$. 
+\\We can proceed like this till $x_ky_k$ and we will eventually reach $\{s_k,p_k\}$. 
+Since $x_1...x_k$ and $y_1...y_k$ are accepted by $D_{L_1}$ and $D_{L_2}$ respectively, we know that $s_k \in F_{L_1}$ and $p_k \in F_{L_2}$.
+\\Thus, $\{s_k,p_k\} \in F_{mix}$.
+
+Now, let us consider any string accepted by $N_{mix}$. The accepted path would also follow the sequence of some $\{s,p\} \rightarrow \{s',p\}$ transitions followed by some $\{s,p\} \rightarrow \{s,p'\}$ transitions. Each of these sequences can be interpreted as some $x_iy_i$, corresponding to the states of transition in $N_{mix}, D_{L_1} $ and $D_{L_2}$. Thus, any string accepted by $N_{mix}$ belongs to Mix($L_{1},L_{2}$).
+
+Hence, \textbf{\boldmath{$L(N_{mix}) = $Mix($L_{1},L_{2}$)}}, and so we can say that Mix($L_{1},L_{2}$) is regular.
+
+\section{Question 5}
+
+\textbf{NFA for the given language}:
+
+\begin{gpicture}
+    \node[Nmarks=i](A)(30,0){$q_0$}
+    \node (B)(60,0){$q_1$}
+    \node (C)(90,0) {$q_2$}
+    \node[Nmarks=r](D)(120,-15){$q_3$}
+    \node[Nmarks=r](E)(68,-15){$q_4$}
+    \node (F)(50,-35){$q_5$}
+    \drawedge(A,B){$a$}
+    \drawedge(B,C){$b$}
+    \drawedge(C,D){$a$}
+    \drawedge (A,F){$b$}
+    \drawedge(B,F){$a$}
+    \drawedge(C,E){$\epsilon$}
+    \drawloop[loopangle=-25](E){$a$}
+    \drawloop[loopangle=0](D){$b$}
+    \drawedge(D,F){$a$}
+    \drawedge(E,F){$b$}
+    \drawloop[loopangle=-90](F){$a,b$}
+\end{gpicture}
+%\vspace{5 cm}
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\\ \text{ }
+\begin{itemize}
+    \item $q_0$ is the starting state of the NFA. States $q_1$ and $q_2$ ensure that the first two letters of the input are $ab$. 
+    \item There are two accepting states $q_3$ and $q_4$. $q_3$ accepts all strings of the form $abab^n$, while $q_4$ accepts all strings of the form $aba^n$.
+    \item State $q_5$ is reached when we read the letter of the string that tells us that the string cannot be accepted (in that path); it is possible for a string of the form $abab^n$ to end up here but it will also end up in state $q_3$. Once a string reaches here, it doesn't leave this state.
+\end{itemize}
+% $q_0$ is the starting state of the NFA. States $q_1$ and $q_2$ ensure that the first two letters of the input are $ab$. 
+% \\There are two final states $q_3$ and $q_4$. $q_3$ accepts all strings of the form $abab^n$, while $q_4$ accepts all strings of the form $aba^n$.
+% \\State $q_5$ is reached when we read the letter of the string that tells us that the string cannot be accepted (in that path); it is possible for a string of the form $abab^n$ to end up here but it will also end up in state $q_3$. Once a string reaches here, it doesn't leave this state.
+
+
+\section {Question 6}
+
+\textbf{Claim}: This language is not a regular language.
+
+\textbf{Proof}: We will prove this by using contra-positive of Pumping Lemma.
+
+\textbf{Statement}:
+Consider the set of strings accepted by this language is denoted by A.Then we have:
+
+$\forall n >0$, $\exists x$ such that $|x| > n$ and $\forall u,v,w $ we have $x=uvw , |uv| \leq n , |v| \geq 1, $ the following statement is true:
+
+\begin{center}
+    $uvw \in A$ and $\exists i \geq 0$ such that $uv^iw \notin A  \Rightarrow$ set A is not Regular 
+\end{center}
+
+As mentioned in lecture , we will play the game against adversary:
+
+\begin{itemize}
+    \item  Adversary chooses $n > 0$
+    \item We choose x such that $|x| > n$
+    .Let us say x is (000.....n  times)(111......n times).Clearly length of x is $2n > n$. Also observe x belongs to set A since the difference between the number of 1's and number of 0's is 0.
+    \item Adversary chooses $u,v,w$ such that $x = uvw , |uv| \leq n , |v| \geq 1$.
+    Let us say adversary chose $u= 000.....$ (n-1) times, $v=0$, w=$111.....$n times 
+    \item Observe that $uvw \in A$.  We have to prove that $\exists i \geq 0 $ such that $uv^iw \notin A$  . Consider $i>=3$ This means we have added more than two zeros to the string keeping the number of ones constant. Hence the difference between number of 1's and number of 0's is greater than equal to 2.
+    
+    For example : i=4:
+    
+    $uv^iw$=(000.... (n-1)times)(0000)(111.....(n times))
+    
+    =(000.....((n+3) times))(111......(n times))
+    
+    Difference between number of ones and number of zeros for this string is 3. Hence this string does not belong to A.
+    \begin{center}
+       $\Rightarrow$ \textbf{Set A is not regular.} 
+    \end{center}
+\end{itemize}
+
+
+\section{Question 7}
+To convert this NFA with set of states $Q$ to its equivalent DFA, we take the set of states of the DFA to be the powerset of $Q$, that is, $\mathcal{P} (Q)$. Based on the given NFA, some of the states can be eliminated in the final DFA.
+\\Since the starting state of the NFA, $q_0$, has an $\epsilon$ transition to state $q_2$, the starting state of our DFA becomes $\{q_0,q_2\}$. Using the definition of $\delta_D$ as defined in the lecture, we can construct a DFA as shown.
+\\The final states are all the states which have the final state of the NFA (that is, $q_3$), as a member of them.
+\begin{center}
+\vspace{4cm}
+\hspace{-6cm}
+    \begin{gpicture}
+        \node[Nmarks=i](A)(0,0){$A$}
+        \node[Nmarks=r](B)(20,15){$B$}
+        \node[Nmarks=r](C)(20,0){$C$}
+        \node[Nmarks=r](D)(20,-20){$D$}
+        \node(E)(40,20){$E$}
+        \node(G)(30,40){$G$}
+        \node[Nmarks=r](H)(50,40){$H$}
+        \node[Nmarks=r](F)(80,10){$F$}
+        %\node(D)(40,15){$q_3$}
+        %\node(E)(40,-15){$q_4$}
+        \drawedge(A,B){$c$}
+        \drawedge(A,C){$b$}
+        \drawedge[curvedepth=-5](A,D){$a$}
+        \drawedge(D,C){$b,c$}
+        \drawedge[curvedepth=-5](E,F){$a,c$}
+        \drawedge(B,E){$b$}
+        \drawedge(B,G){$a$}
+        \drawedge(G,H){$a,c$}
+        \drawedge[curvedepth=-10](F,H){$a,c$}
+        \drawedge[curvedepth=30](G,F){$b$}
+        \drawedge[curvedepth=15](B,F){$c$}
+        \drawedge(E,C){$b$}
+        \drawedge[curvedepth=-5](C,F){$a,c$}
+         \drawloop[loopangle=-90](D){$a$}
+         \drawloop[loopangle=-135](H){$c$}
+         \drawloop[loopangle=-30](C){$b$}
+         \drawloop[loopangle=-30](F){$b$}
+        % \drawloop(C)[loopangle=-45]{$b$}
+        % \drawloop[loopangle=0](D){$b$}
+        % \drawloop[loopangle=0](E){$a$}
+        % \drawedge[curvedepth=5](B,D){$b$}
+        % \drawedge[curvedepth=5](D,B){$a$}
+        % \drawedge(A,C){$b$}
+        % \drawloop(C){$b$}
+        % \drawedge[curvedepth=5](C,E){$a$}
+        % \drawedge[curvedepth=5](E,C){$b$}
+    \end{gpicture}    
+\vspace{3cm}
+\end{center}
+Labels of States:
+A: $\{q_0,q_2\}$, B: $\{q_1,q_3\}$,  C: $\{q_1,q_2,q_3\}$,  D: $\{q_0,q_1,q_2,q_3\}$, E:  $\{q_1,q_2\}$, F: $\{q_2,q_3\}$, G: $\{q_2\}$, H: $\{q_3\}$
+\section{Question 8}
+\subsection{8(a)}
+The Regular Expression whose language is L = $\{w \in {\{a,b\}}^*|w$ contains an equal number of occurrences of $ab$ and $ba\}$ is 
+$\Rightarrow \fbox{\epsilon + a(a+b^+a)^*+b(b+a^+b)^*}$
+%\vspace{1cm}
+\subsection{8(b)}
+\begin{center}
+\hspace{-6cm}The DFA which accepts L is\\
+\vspace{2cm}
+    \begin{gpicture}
+        \node[Nmarks=ir](A)(0,0){$q_0$}
+        \node[Nmarks=r](B)(20,15){$q_1$}
+        \node[Nmarks=r](C)(20,-15){$q_2$}
+        \node(D)(40,15){$q_3$}
+        \node(E)(40,-15){$q_4$}
+        \drawedge(A,B){$a$}
+        \drawloop(B){$a$}
+        \drawloop[loopangle=0](D){$b$}
+        \drawloop[loopangle=0](E){$a$}
+        \drawedge[curvedepth=5](B,D){$b$}
+        \drawedge[curvedepth=5](D,B){$a$}
+        \drawedge(A,C){$b$}
+        \drawloop(C){$b$}
+        \drawedge[curvedepth=5](C,E){$a$}
+        \drawedge[curvedepth=5](E,C){$b$}
+    \end{gpicture}    
+\end{center}
+\vspace{2cm}
+\begin{itemize}
+    \item State $q_0$ is the initial state and the states $q_0,q_1,q_2$ are the final states.
+    \item State $q_0$ accepts an empty string ($\epsilon$).
+    \item State $q_1$ accepts strings of type $a(a+b^+a)^*$ which means strings that start with $a$ and have equal number $ab$ and $ba$.
+    \item State $q_2$ accepts strings of type $b(b+a^+b)^*$ which means strings that start with $b$ and have equal number $ba$ and $ab$.
+\end{itemize}
+
+\section{Question 9}
+The minimal DFA for the given DFA is:\\
+
+\vspace{150mm}
+\begin{center}
+    \begin{gpicture}
+        \node[Nmarks=i](A)(0,0){$Q_1$}
+        \node(B)(20,20){$Q_2$}
+        \node(C)(20,-20){$Q_3$}
+        \node[Nmarks=r](D)(40,0){$Q_4$}
+        \drawedge[curvedepth=5](A,B){$a$}
+        \drawedge[curvedepth=5](B,A){$b$}
+        \drawedge[curvedepth=5](A,C){$b$}
+        \drawedge[curvedepth=5](C,A){$a$}
+        \drawloop[loopangle=0](D){$a,b$}
+        \drawedge(B,D){$a$}
+        \drawedge(C,D){$b$}
+    \end{gpicture}
+\end{center}
+\vspace{2cm}
+Where, $Q_1=\{q_1\}, Q_2=\{q_2\}, Q_3=\{q_3\}, Q_4=\{q_4,q_5,q_6\}$
+\begin{table}[h!]
+\centering
+\begin{tabular}{||c c c||} 
+ \hline
+ State & $a$ & $b$ \\ [0.5ex] 
+ \hline\hline
+ $q_1$ & $q_2$ & $q_3$ \\
+ $q_2$ & $q_4$ & $q_1$ \\
+ $q_3$ & $q_1$ & $q_5$ \\
+ $q_4$ & $q_6$ & $q_4$ \\
+ $q_5$ & $q_5$ & $q_6$ \\
+ $q_6$ & $q_6$ & $q_6$ \\ [1ex]
+ \hline
+\end{tabular}
+\caption{Transition table of the original DFA.}
+\label{table:1}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+        \begin{tabular}{cccccc}
+        1 & & &\\
+        - & 2 &  &\\
+        - & - & 3 &\\
+        - & - & - & 4\\
+        - & - & - & - & 5\\
+        - & - & - & - & - & 6\\
+        \end{tabular}
+        \caption{Initial table}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+        \begin{tabular}{cccccc}
+        1 & & &\\
+        - & 2 &  &\\
+        - & - & 3 &\\
+        \checkmark & \checkmark & \checkmark & 4\\
+        \checkmark & \checkmark & \checkmark & - & 5\\
+        \checkmark & \checkmark & \checkmark & - & - & 6\\
+        \end{tabular}
+        \caption{1st iteration of algorithm}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+        \begin{tabular}{cccccc}
+        1 & & &\\
+        \checkmark & 2 &  &\\
+        \checkmark & \checkmark & 3 &\\
+        \checkmark & \checkmark & \checkmark & 4\\
+        \checkmark & \checkmark & \checkmark & - & 5\\
+        \checkmark & \checkmark & \checkmark & - & - & 6\\
+        \end{tabular}
+        \caption{2nd iteration of algorithm}
+    \label{tab:my_label}
+\end{table}
+
+\begin{table}[!h]
+    \centering
+        \begin{tabular}{cccccc}
+        1 & & &\\
+        \checkmark & 2 &  &\\
+        \checkmark & \checkmark & 3 &\\
+        \checkmark & \checkmark & \checkmark & 4\\
+        \checkmark & \checkmark & \checkmark & - & 5\\
+        \checkmark & \checkmark & \checkmark & - & - & 6\\
+        \end{tabular}
+        \caption{3rd iteration of algorithm}
+    \label{tab:my_label}
+\end{table}
+
+\newpage
+We have used the \textit{Minimization Algorithm}.~\cite{toc}.
+The algorithm will stop at the 3rd iteration since the table after the 2nd and 3rd iterations is the same. The final table tells us that $4\approx 5$, $5\approx 6$ and $6\approx 4$.
+Therefore, the minimal DFA will have states defined by these equivalence classes: \\
+$Q_1=\{q_1\}, Q_2=\{q_2\}, Q_3=\{q_3\}, Q_4=\{q_4,q_5,q_6\}$, where $Q_1$ is the initial state and $Q_4$ is the final state.
+
+\section{Question 10}
+
+\textbf{Claim:} The regular expression whose language is $L$ is of the form $(a+b)^+(aa + bb)(a+b)^+$.
+
+\textbf{Proof: }
+
+Since, we are concatenating $v$ and $v^r$, It is easy to observe that the string should have at least one occurence of $aa$ or $bb$ if the last character is of $v$ is $a$ or $b$ respectively. Also since , we have to chose non empty strings  $u,v,w$, we make the following choice:
+\begin{itemize}
+    \item \textbf{Case 1:}  $v=a , v^r = a$ , $u$ and $w$ can be any non empty strings and hence of the form $(a+b)^+$
+    \item \textbf{Case 2:}  $v=b , v^r = b$ , $u$ and $w$ can be any non empty strings and hence of the form $(a+b)^+$
+\end{itemize}
+
+Note that any string of the language $L$ falls in one of the two cases, and hence we just have to construct a NFA corresponding to the union of the two cases.
+
+\textbf{Construction of equivalent NFA}:
+
+
+
+
+
+
+\vspace{10mm}
+\begin{gpicture}
+\node [Nmarks=i](A)(30,0){$q_0$}
+\node (B)(50,0){$q_1$}
+\node (C)(70,0){$q_2$}
+\node (D)(90,15){$q_3$}
+\node (E)(90,-15){$q_4$}
+\node (F)(110,15){$q_5$}
+\node (G)(110,-15){$q_6$}
+\node [Nmarks=r](H)(130,0){$q_7$}
+\drawedge(A,B){$a,b$}
+\drawedge(B,C){$\epsilon$}
+\drawedge(C,D){$a$}
+\drawedge(C,E){$b$}
+\drawedge(D,F){$a$}
+\drawedge(E,G){$b$}
+\drawedge(F,H){$a,b$}
+\drawedge(G,H){$a,b$}
+\drawedge[curvedepth=3](D,E){$b$}
+\drawedge[curvedepth=3](E,D){$a$}
+\drawloop[loopangle=0](H){$a,b$}
+\drawloop[loopangle=-90](B){$a,b$}
+\end{gpicture}
+
+
+
+
+\vspace{1 cm}
+
+
+\textbf{Function of each state:}
+
+\begin{center}
+\begin{tabular}{ |c|c| } 
+ \hline
+ State & Function \\ 
+ \hline
+ $q_0$ & Start state \\
+ \hline
+ $q_1$ & Ensuring $u$ is a non empty string \\
+ \hline
+ $q_2$ & Going to $v$ through $\epsilon$ transition \\
+ \hline
+ $q_3$ & If $v=a$ \\
+ \hline
+ $q_4$ & If $v=b$ \\
+ \hline
+ $q_5$ & If $v=a$ , $v^r=a$ \\
+ \hline
+ $q_6$ & If $v=b$ , $v^r=b$ \\
+ \hline 
+ $q_7$ & Ensuring $w$ is a non empty string and accepting the final string \\
+ \hline
+\end{tabular}
+\end{center}
+
+The transitions between $q_3$ and $q_4$ ensures $aa$ or $bb$ must be present for the string to reach $q_7$ (accepting state).
+\section{Question 11}
+
+\textbf{Claim}:
+Only 1. and 2. are equivalent regular expressions.
+
+
+\textbf{Proof}:
+There are two parts of this proof:
+\begin{itemize}
+    \item Proving first and second regular expressions are equivalent
+    \item Proving first/second are not equivalent to third
+\end{itemize}
+
+Let us first prove that first expression is not equivalent to third expression. 
+To show this, we can just show a string that is accepted by the language made by the first regular expression and is rejected by the language made by the third regular expression.
+
+Consider the string $ y=b $ :
+
+\begin{itemize}
+    \item $b$ is accepted by the first regular expression. Consider $(a+ba)$ 0 times, you have $b +\epsilon$ which accepts $b$
+    \item The third expression does not accept $y$ as it needs either $a$ or $ba$ as the prefix.
+\end{itemize}
+
+\textbf{Proving Equivalence between first and second regular expressions}:
+
+Let's analyze $(a+ba)^*$:
+\begin{itemize}
+    \item This expression means that we can have either $a$ or $ba$  any number of times and in any sequence
+    \item Thus, we can have any (may be 0) number of $a's$ followed by any (may be 0) number of $ba$ strings, further followed by any number of $a's$ and so on.
+    \item Mathematically we can divide the expression into blocks of $a's$ and $ba$ strings.
+    So it looks like:
+    
+    $(aa...$ $n_1$ times$)((ba)(ba)(ba)....$ $m_1$ times)$(aa... $ $n_2$ times)$((ba)(ba)(ba).....$ $m_2$ times) and so on, till some $n_k$ and $m_k$, where all $m__i$ and $n_i$ are whole numbers.
+    
+    \item Creating blocks of all $m_i$ and $n_i$ we have 
+    
+     $\textbf{[}(aa...$ $n_1$ times$)((ba)(ba)(ba)....$ $m_1$ times)\textbf{][}$(aa... $ $n_2$ times)$((ba)(ba)(ba).....$ $m_2$ times)\textbf{]} and so on.
+     \item Each of these blocks represents a member of the regular expression $a^*(ba)^*$
+     \item Since the number of blocks is a whole number, we can say that all the blocks combined are a member of the regular expression $(a^*(ba)^*)^*$
+     \item Since every member of the regular expression $(a^*(ba)^*)^*$ can be represented like this, we can say that these regular expressions are equivalent, that is, \\$(a^*(ba)^*)^* \equiv (a+ba)^*$ 
+     \item Thus, clearly, $(a^*(ba)^*)^*(b+\epsilon) \equiv (a+ba)^*(b+\epsilon)$ 
+     \item Let us take any member of $a^*$. This will contain only some number of $a$'s. Clearly, this will also belong to $a^*(ba)^*$, and thus also to $(a^*(ba)^*)^*$. Similarly, any member of $(ba)^*$ will also belong to $(a^*(ba)^*)^*$.
+     \item So, we can say that $(a^*(ba)^*)^* \equiv (a^*(ba)^*)^* + a^* + (ba)^*$
+     \item Hence , $(a+ba)^*(b+\epsilon)$ is equivalent to $(a^*(ba)^*)^*(b+\epsilon) + a^*(b+\epsilon) + (ba)^*(b + \epsilon )$.
+     
+
+\end{itemize}
+
+Since first is equivalent to second, and first is not equivalent to third, so second is also not equivalent to third.
+
+\begin{center}
+    $\Rightarrow$ \textbf{Only first and second expressions are equivalent}
+\end{center}
+\section{Question 12}
+\subsection{(a)}
+The DFA which accepts such $L$ is:\\
+\newpage
+\vspace{7cm}
+\hspace{2cm}
+\begin{gpicture}
+%\vspace{7cm}
+\node[Nmarks={i,r}](A)(0,-75){$q_0$}
+\node[Nmarks=r](B)(20,-75){$q_1$}
+\node[Nmarks=r](C)(40,-75){$q_{11}$}
+\node[Nmarks=r](D)(60,-75){$q_{111}$}
+\node[Nmarks=r](E)(80,-75){$q_{1110}$}
+\node[Nmarks=r](F)(20,-50){$q_{10}$}
+\node[Nmarks=r](G)(20,-25){$q_{101}$}
+\node[Nmarks=r](H)(20,0){$q_{1011}$}
+\node[Nmarks=r](I)(40,-50){$q_{110}$}
+\node[Nmarks=r](J)(40,-25){$q_{1101}$}
+\node(K)(60,-50){$q_{R}$}
+\drawedge(A,B){$1$}
+\drawedge(B,C){$1$}
+\drawedge(C,D){$1$}
+\drawedge(D,E){$0$}
+\drawedge(B,F){$0$}
+\drawedge(C,I){$0$}
+\drawedge(D,K){$1$}
+\drawedge(F,G){$1$}
+\drawedge(G,H){$1$}
+\drawedge(F,A){$0$}
+\drawedge[curvedepth=-8](G,F){$0$}
+\drawedge(H,I){$0$}
+\drawedge(I,J){$1$}
+\drawedge(I,A){$0$}
+\drawedge(J,F){$0$}
+\drawloop[loopangle=0](K){$1,0$}
+\drawedge(E,K){$1$}
+\drawedge[curvedepth=12](H,K){$1$}
+\drawedge[curvedepth=5](J,K){$1$}
+
+\end{gpicture}
+%\newpage
+\vspace{9cm}
+\begin{itemize}
+    \item This DFA assumes that we check all possible blocks of length 5 present in the input.
+    \item We assume that trivial inputs of length less than 5 are accepted.
+    \item The DFA searches for a block of 5 that has less than two 0's, and on finding such a block sends the input to a reject state ($q_R$) which has no outgoing transitions, forcing the input to be rejected.
+    \item The subscript of the label of the state ($x$ in $q_x$) indicates the letters of the block we are currently checking. If we can infer that there will be a block of 5 with less than two 0's, we send the input to the reject state. If we do not find a block like this after having taken all the input, we can say that the input will be accepted, thus all other states are accepting.
+\end{itemize}
+\subsection{(b)}
+The DFA which accepts such $L$ is:\\
+
+\vspace{2cm}
+\hspace{2cm}
+\begin{gpicture}
+    \node[Nmarks=ir](A)(0,0){$q_0$}
+    \node(B)(60,20){$q_1$}
+    \node(C)(30,0){$q_2$}
+    \node(D)(60,-20){$q_3$}
+    \node[Nmarks=r](E)(100,20){$q_4$}
+    \node[Nmarks=r](F)(100,-20){$q_5$}
+    \drawedge[curvedepth=5](A,B){$0$}
+    \drawedge[curvedepth=-5](A,D){$1$}
+    \drawedge[curvedepth=5](B,C){$0$}
+    \drawedge[curvedepth=-5](D,C){$1$}
+    \drawloop[loopangle=180](C){$0,1$}
+    \drawedge[curvedepth=5](B,E){$1$}
+    \drawedge[curvedepth=5](D,F){$0$}
+    \drawedge[curvedepth=5](E,B){$0$}
+    \drawedge[curvedepth=5](F,D){$1$}
+    \drawedge[curvedepth=-5](E,D){$1$}
+    \drawedge[curvedepth=5](F,B){$0$}
+\end{gpicture}
+
+\vspace{4cm}
+\begin{itemize}
+    \item The regular expression which defines this language is $(01+10)^*$.
+    \item State $q_0$ is the initial state and the states $q_0,q_4,q_5$ are the final states.
+    \item State $q_0$ accepts an empty string ($\epsilon$).
+    \item State $q_4$ accepts strings that end with $01$, and satisfy the required property.
+    \item State $q_5$ accepts strings that end with $10$, and satisfy the required property.
+    \item State $q_2$ rejects all those strings which makes one of the prefix to have more than one $0$ than $1$ or more than one $1$ than $0$. 
+\end{itemize}
+
+\section {Question 13} 
+\textbf{Strategy}:
+
+Since $L$ is regular , there exists a DFA whose set of accepting strings is the language $L$. Using that DFA , we will construct a DFA/NFA that will accept the strings in the language $L_{\frac{1}{2}}$ and hence $L_{\frac{1}{2}}$ will be proved regular.
+
+% \textbf{Insight}:
+
+% Before we construct DFA using symbols , let's define the DFA in words. Let's say the DFA of langugae $L$ is D. On reading $x$ $D$ reaches a set of states say $M$. In $M$ , only the following states are acceptable:
+% \begin{itemize}
+%     \item Those states in $M$ , that have a path to the final accepting state of length equal to the length of $x$ are accepted by the new DFA
+% \end{itemize}
+
+% To make this DFA , we will keep a track of two things:
+
+% \begin{itemize}
+%     \item The state in which we land after reading say $i$ alphabets of the input
+%     \item The set of states $M_i$ which contains the states that have a path to the former accepting/final states of length equal to $i$.
+%     For this we will have to go in a backward direction from the former accepting states. 
+% \end{itemize}
+
+
+
+\textbf{Construction of DFA:}
+
+Let us denote the DFA corresponding to the language $L$ as $D=\{Q,q_0,\sum,\delta,F\}$ . 
+
+The DFA corresponding to $L_\frac{1}{2}$ is denoted by $N=\{Q_N,s_N,\sum,\delta_N,F_N\}$ where :
+\begin{center}
+    The states of $Q_N$ are of the form $(q,M)$ where $q \in Q$ and $M \subseteq Q$\\
+    $s_N$ is the starting state $(q_0,F)$\\
+    $\sum $ remains the same \\
+    $\delta_N$ is defined as follows:
+    
+    
+    $\delta_N((q,M),a)=(\delta(q,a),M')$ where $M'=\{t  | \exists b \in \sum $ s.t $\exists p \in M$ s.t $\delta(t,b)=p : p,t \in Q\}$
+    \\
+    $F_N=\{(q,S) | q \in S \ \text{ and } S \subseteq Q\}$
+    
+\end{center}
+
+\textbf{Proof:}
+
+\textbf{Claim:}
+
+Let us consider we reach a state $(q_i,M_i)$ after reading $i$ alphabets in the input. Claim is:
+
+\begin{itemize}
+\item $q_i$ is the state that the DFA $D$ reaches on reading $i$ alphabets of the input.
+\item The states in the set $M_i$ have a path to the accepting states of the DFA $D$ such that the length of the path is exactly $i$.
+
+
+\end{itemize}
+
+\textbf{Proof of Claim}:
+
+\begin{itemize}
+    \item The first point is evident by the transition table itself.
+    \item Initially $M_0$ is $F$ that is the set of final states of $D$. Now, whenever we read an alphabet we change $M$ such that we require one more input to reach the final state from the elements of $M$. That is we are going in the backward direction in the DFA starting from the set of final states.
+    
+    
+    
+   \tetxbf{Formal Proof: Induction on Length of input $x$}
+    
+   \textbf{ Base case }: $|x|=0$ 
+    
+    $M_0=F$ implies that the distance of the states in $M_0$ to the final states is 0.
+    
+    \textbf{Induction Hypothesis}:The states in the set $M_i$ have a path to the accepting states of the DFA $D$ such that the length of the path is exactly $i$.
+    
+    \textbf{Induction Step:}
+    $\delta_N((q_i,M_i),a_{i+1})=(\delta(q_i,a),M_{i+1}$ where $M_{i+1}=\{t  | \exists b \in \sum $ s.t $\exists p \in M_i $ s.t $\delta(t,b)=p : p,t \in Q\}$
+    
+    Path length from the states in $M_{i+1}$ to the final states of $D$ = Path length(t,p)+Path length  from the states of $M_i$ to the final states of $D$ 
+    Path length($M_{i+1}$)=1+Path length($M_i$) since there is a transition from t to p.
+    
+    Hence proved by induction
+    \end{itemize}
+
+Now , using the claim it is easy to observe that the set of final states is $F_N=\{(q,M)|q\in M\}$
+
+As after reading the input, our NFA reaches the state $(q,S)$ where q is the same state that the DFA $D$ will reach after reading the same input. As $q$ belongs to $S$ , there exists a path from q to the final accepting state of $D$ of the same length as that of the input string . Call the string corresponding to this path as $y$.
+Clearly $xy$ belongs to $F$ and $|x|=|y|$  hence $x \in L_\frac{1}{2}$.
+\\Thus, there is an NFA that accepts $L_\frac{1}{2}$.
+\\Thus, $L_\frac{1}{2}$ is a regular language.
+
+\section{Question 14}
+
+\textbf{General Strategy:}
+Since L is regular , there exists a DFA $F$ whose set of accepting strings forms the language L.
+With the help of this DFA We will construct a NFA that will accept the reverse of the strings in a language L. Then , by arguing the equivalence of NFA and DFA , we can say that there exists a DFA that accepts $L'$. Hence $L'$ is regular.
+
+\textbf{Construction of NFA}:
+
+Consider the DFA corresponding to L is $F=\{Q,q_0,\sum,\delta,A\}$. We construct the following NFA $F'=\{Q',t_0,\sum,\delta',A'\}$ defined as follows:
+
+\begin{center}
+    $Q'=Q \cup \{t_0\}$ , where $t_0$ is the new start state we constructed \\
+    $t_0=t_0$ , the new start state is $t_0$ \\
+    $\sum = \sum$, alphabet remains the same \\
+    $A'=\{q_0\}$ , the start state of $F$ becomes the final state\\
+    $\delta'(t_0,\epsilon)=A$ , making epsilon transition to the set of final states of the DFA of L
+    
+    $\forall p \in Q , \delta'(p,a)=\{q \in Q| \delta(q,a)=p$\} , reversing the transitions
+    
+    
+    
+\end{center}
+
+\textbf{Description}:
+
+We added a new state to the DFA which is our new start state. We linked this new state to the former final states through epsilon transition . We made the former start state as our new final state. 
+
+Once start and final states are decided, we just reverse the direction of the edges so that the new DFA will accept reverse of strings present in L.
+
+Consider the string $s=a_1a_2a_3a_4.....a_n \in L$. Reversing the string gives us $s'=a_na_{n-1}......a_1$. We shall prove that if $F$ accepts $s$, $F^'$ must accept $s'$.
+Let $F$ accept $s$, and end up in some final state $q_n$. So, in our NFA $F^'$, we can reach $q_n$ without any input upon taking an $\epsilon$ transition from $t_0$ to $q_n$. This transition exists as $\delta'(t_0,\epsilon)=A$. Now, let any transition in $F$ while running input $s$ be as follows:
+\\$\delta(q_{i - 1},a_i)= q_i$ for some states $q_i$ all of which are not necessarily distinct.
+\\By definition of $\delta'$, we can say that $\delta'(q_i,a_i)= q_{i - 1}$.
+\\Thus, on input $a_n$, we go to state $q_{n - 1}$. Then, on taking input $a_{n - 1}$, we reach $q_{n - 2}.$ Similarly, we can keep traversing backwards on taking $s'$ as input and eventually upon taking $a_1$ as input we will reach $q_0$ , which is a final state for $F'$. So, $s'$ is accepted by NFA $F'$, for all $s$ in $L$.
+\\ $\Rightarrow$ All strings in $L'$ are accepted by an NFA.
+\\ $\Rightarrow$ $L'$ is regular.
+
+\section{Question 15}
+The DFA which accepts such L is:\\
+
+\vspace{2cm}
+\hspace{2cm}
+\begin{gpicture}
+    \node[Nmarks=ir](A)(0,0){$q_0$}
+    \node[Nmarks=r](B)(60,20){$q_1$}
+    \node[Nmarks=r](C)(20,0){$q_2$}
+    \node[Nmarks=r](D)(60,-20){$q_3$}
+    \node(E)(100,0){$q_4$}
+    \drawedge[curvedepth=7](A,B){$0$}
+    \drawedge(A,C){$1$}
+    \drawedge[curvedepth=-7](A,D){$2$}
+    \drawedge[curvedepth=3](B,C){$1$}
+    \drawedge[curvedepth=3](C,B){$0$}
+    \drawedge[curvedepth=3](C,D){$2$}
+    \drawedge[curvedepth=3](D,C){$1$}
+    \drawedge[curvedepth=5](B,D){$2$}
+    \drawedge[curvedepth=5](D,B){$0$}
+    \drawedge[curvedepth=4](B,E){$0$}
+    \drawedge(C,E){$1$}
+    \drawedge[curvedepth=-4](D,E){$2$}
+    \drawloop[loopangle=0](E){$0,1,2$}
+\end{gpicture}
+
+\vspace{4cm}
+\begin{itemize}
+    \item State $q_0$ is the initial state and the states $q_0,q_1,q_2,q_3$ are the final states.
+    \item State $q_0$ accepts an empty string ($\epsilon$).
+    \item State $q_1$ accepts strings that end with $0$ and doesn't contain any consecutive $0,1,2$. Any extension to this string with a $0$ will lead to a rejecting string since there can't be consecutive $0$s in the string.
+    \item State $q_2$ accepts strings that end with $1$ and doesn't contain any consecutive $0,1,2$. Any extension to this string with a $1$ will lead to a rejecting string since there can't be consecutive $1$s in the string.
+    \item State $q_3$ accepts strings that end with $2$ and doesn't contain any consecutive $0,1,2$. Any extension to this string with a $2$ will lead to a rejecting string since there can't be consecutive $2$s in the string.
+    \item State $q_4$ rejects all those strings which has consecutive $0,1,2$.
+\end{itemize}
+
+\section {Question 16}
+\subsection{Part 1}
+We seek to prove that if $L \subseteq \sum^*$ is regular, then $h(L)$ is also regular.
+\\Let $r$ be the regular expression corresponding to the regular language $L$.
+We now modify the regular expression $r$ by replacing each letter of $r$ by its image in $\Delta$.
+That is, we replace all letters $a \in \sum$ present in $r$, with their image $h(a) \in \Delta$. Let the expression formed this way be $r'$. We can similarly define $x^'$ for any regular expression $x$ defined over $\sum$.
+\\We now claim that the language of this expression, that is, $L(r')$, is $h(L)$.
+\\\textbf{Lemma}: $h(x)h(y) = h(xy) \forall x,y \in \sum^*$
+\\We show this by induction on length of y.
+\\Base Cases: 
+\begin{itemize}
+\item $h(x)h(\epsilon) = h(x\epsilon) = h(x) \forall x \in \sum^*$
+\item $h(x)h(y) = h(xy) \forall y \in \sum, x \in \sum^*$
+\end{itemize}
+\\Inductive Case: Let $h(x)h(y) = h(xy) \forall x,y \in \sum^*, \vert y \vert \leq n$
+\\$h(x)h(ya) = h(x)h(y)h(a) \forall x,y \in \sum^*, a \in \sum $
+\\ $\Rightarrow h(x)h(ya) = h(xy)h(a) \forall x,y \in \sum^*, a \in \sum $
+\\ $\Rightarrow h(x)h(ya) = h(xya) \forall x,y \in \sum^*, a \in \sum $ ( as $xy \in \sum^*$)
+\\ $\Rightarrow h(x)h(y) = h(xy) \forall x,y \in \sum^*, \vert y \vert \leq n + 1 $
+
+\\Thus, we can say that $h(x)h(y) = h(xy) \forall x,y \in \sum^*$.
+
+Now, let us look at $L(r^{'})$. We prove by induction that for any regular expression $x$ defined over $\sum$, $L(x^{'}) = h(L(x))$.
+\\Base Cases:
+\begin{itemize}
+\item Let $h(a) = a^{'} $ for some $a' \in \Delta$
+\\Then, $L(a^{'}) = L(h(a)) = \{h(a)\}$
+\\We also know that $L(a) = \{a\}$ and $h(\{a\}) = \{h(a)\}$ (by our definition)
+\\Thus, $L(h(a)) = h(L(a))$
+\item $L(\epsilon^{'}) = h(L(\epsilon)) = \epsilon$
+\end{itemize}
+\\Induction Cases:
+Consider two regular expressions $x$ and $y$ where $x,y$ are defined over $\sum$.
+\begin{itemize}
+\item $L((x + y)^{'}) = L(x' + y') = h(L(x)) \cup h(L(y))$ (By definition)
+\\ $\Rightarrow L((x + y)^{'}) = h(L(x)) \cup h(L(y))$ (Induction Hypothesis)
+\\ $\Rightarrow L((x + y)^{'}) = h(L(x) \cup L(y)) = h(L(x + y))$ (By Lemma)
+\item Similarly, we can say that $L((x\cdot y)^{'}) = h(L(x \cdot y))$
+\item $L(x^{*'}) = L(x^{'*})$ (By definition)
+\\ $ \Rightarrow  L(x^{*'}) = L((x^{'})^*) = h(L(x))^*$ (Induction Hypothesis)
+\\ Since we know that $h(x)$ is conserved under set unions by the lemma, we can say that $h(L(x))^* = h(L(x)^*)$
+\\ $h(L(x)^*) = h(L(x^*))\Rightarrow L(x^{*'}) = h(L(x^*))$
+\end{itemize}
+Thus, by induction, we can say that $L(x^{'}) = h(L(x))$ for any regular expression $x$ defined over $\sum$.
+Thus, \boldmath{$L(r^{'}) = h(L)$}.
+\unboldmath
+
+
+\subsection{Part 2}
+Let $F = \{Q,q_0,\Delta,\delta,A\}$ be a DFA that accepts $L$.
+\\We modify our definition of $\delta$ so that it can now accommodate inputs in $\Delta^*$, not only those in $\Delta$. We do this by adding two new definitions in $\delta$:
+\begin{itemize}
+\item $\delta(q,\epsilon) = q$
+\item $\delta(q,xa) = \delta(\delta(q,x),a)$ for $x \in \Delta^*$ and $a \in \Delta$
+\end{itemize}
+We create a new DFA $F' =\{Q,q_0,\sum,\delta',A\}$ for $h^{-1}(L)$.
+\\Define $\delta'$ as follows:
+\\$\delta'(q,x) = \delta(q,h(x))$, where x $ \in\sum^*$.
+$$\delta'(q,xa) = \delta'(\delta'(q,x),a)$$
+$$\Rightarrow \delta'(q,xa) = \delta(\delta(q,h(x)),h(a))$$
+$$\Rightarrow \delta'(q,xa) = \delta(q,h(x)h(a))$$
+$$\Rightarrow \delta'(q,xa) = \delta(q,h(xa))$$
+Thus, by induction, we can say that $\delta'(q,s) = \delta(q,h(s)) \forall s \in \sum$
+
+Let $F^'$ accept some language $L^'$. Then, we know that for all $x \in L^{'} , \delta^{'}(q,x) = q_A$ for some $q_A \in A$.
+\\$\iff \delta(q,h(x)) = q_A $
+\\$\iff h(x)$ is accepted by $F$ (as $q_A \in A$) .
+\\$\iff h(x) \in L$.
+\\$\iff x \in h^{-1}(L)$.
+Thus, $F^'$, a DFA, accepts $h^{-1}(L)$.
+\\Thus, $h^{-1}(L)$ is regular.
+
+\bibliographystyle{abbrv}    
+\bibliography{refs} 
+
+\end{document} 
