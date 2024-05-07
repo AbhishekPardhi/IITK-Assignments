@@ -6,3 +6,5 @@ You can find 'my' solutions to them in this repo itself or in my other repositor
 - Shell Scripting Assignment: <a href="https://github.com/AbhishekPardhi/Shell-Scripting">Shell-Scripting</a>
 - Python Assignment: <a href="https://github.com/AbhishekPardhi/Classification">Classification</a>
 - SAT Solver Assignment: <a href="https://github.com/AbhishekPardhi/SAT-Solver">SAT-Solver</a>
+- JAVA Compiler: <a href="https://github.com/AbhishekPardhi/CS335-Project">CS335-Project</a>
+- DBMS Project: <a href="https://github.com/AbhishekPardhi/BiteBuddy">BiteBuddy</a>
